@@ -8,6 +8,7 @@ const bcyrpt = require('bcrypt')
 const saltRounds = 12
 const jwt = require('jsonwebtoken')
 const { Model } = require('objection')
+const { response } = require('express')
 
 Model.knex(database)
 app.use(cors())
@@ -83,6 +84,11 @@ app.get('/events', (request, response) => {
 app.post('/events', (request, response) => {
   
 })
+
+app.get('/users', (request, response) => {
+  database('user').select()
+    .then(users => response,json({users}))
+} )
 
 
 
