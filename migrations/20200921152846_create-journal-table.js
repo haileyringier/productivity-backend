@@ -4,7 +4,7 @@ exports.up = async knex => {
         table.increments('id')
         table.string('entry')
         table.date('date')
-        // table.integer("user_id").references("id").inTable("user")
+        table.integer('user_id').references('id').inTable('user')
     })
 };
   
