@@ -110,7 +110,7 @@ app.post('/users', (request, response) => {
           .then(newUser => response.json({ user: newUser[0]}))
   })
 })
-
+// need to fix this route
 app.post('/login', (request, response) => {
   database('user')
       .where({ username: request.body.username })
@@ -127,6 +127,8 @@ app.post('/login', (request, response) => {
           })
       })
 })
+
+
 app.delete('/users/:id', (request, response) => {
   const { id } = request.params
     User.query().deleteById(id)
