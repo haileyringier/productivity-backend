@@ -18,7 +18,6 @@ const Journal = require('./Models/Journal')
 Model.knex(database)
 app.use(cors())
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false}));
 
 app.listen(port, () => {
     console.log(`App running on port ${port}`)
@@ -39,28 +38,15 @@ app.get('/habits', (request, response) => {
    .then(habits =>  response.json(habits));
 })
 app.post('/habits', (request, response) => {
-  Habit.query().insert({
-    id: request.body.id,
-    title: request.body.title, 
-    goalDays: request.body.goalDays, 
-    currentDays: request.body.currentDays,
-    user_id: request.body.user_id
-  })
-  response.json("created")
+  const { title, goalDays, currentDays, user_id } = request.body
+  Habit.query().insert({title, goalDays, currentDays, user_id})
+    .then(habit => {response.json({habit})})
 })
 
-// app.post('/habits', (request, response) => {
-//   database('habits').insert({
-//     title: request.body.title, 
-//     goalDays: request.body.goalDays, 
-//     currentDays: request.body.currentDays,
-//     user_id: request.body.user_id })
-//   response.send({message: "habit created", habit: habit})
-// })
 app.delete('/habits/:id', (request, response) => {
-  // database('habits').select().where({id: request.params.id})
-  //   .del()
-    Habit.query().deleteById(request.params.id)
+  const { id } = request.params
+    Habit.query().deleteById(id)
+      .then(response.json("Deleted"))
 })
 
 // journal 
@@ -69,7 +55,14 @@ app.get('/journal', (request, response) => {
    .then(entries =>  response.json(entries));
 })
 app.post('/journal', (request, response) => {
-  
+  const { entry, date, user_id } = request.body
+  Journal.query().insert({entry, date, user_id})
+    .then(journal => {response.json({journal})})
+})
+app.delete('/journal/:id', (request, response) => {
+  const { id } = request.params
+    Journal.query().deleteById(id)
+      .then(response.json("Deleted"))
 })
 
 // goals 
@@ -78,7 +71,14 @@ app.get('/goals', (request, response) => {
    .then(goals =>  response.json(goals));
 })
 app.post('/goals', (request, response) => {
-  
+  const { description,  user_id } = request.body
+  Goal.query().insert({description, user_id})
+    .then(goal => {response.json({goal})})
+})
+app.delete('/goals/:id', (request, response) => {
+  const { id } = request.params
+    Goal.query().deleteById(id)
+      .then(response.json("Deleted"))
 })
 
 // events
@@ -87,9 +87,17 @@ app.get('/events', (request, response) => {
    .then(events =>  response.json(events));
 })
 app.post('/events', (request, response) => {
-  
+  const { title, content, date, startTime, endTime, user_id } = request.body
+  Event.query().insert({title, content, date, startTime, endTime, user_id})
+    .then(event => {response.json({event})})
+})
+app.delete('/events/:id', (request, response) => {
+  const { id } = request.params
+    Event.query().deleteById(id)
+      .then(response.json("Deleted"))
 })
 
+// users
 app.post('/users', (request, response) => {
   bcrypt.hash(request.body.password, saltRounds, (error, hashed_password) => {
       database('user')
@@ -118,6 +126,11 @@ app.post('/login', (request, response) => {
               }
           })
       })
+})
+app.delete('/users/:id', (request, response) => {
+  const { id } = request.params
+    User.query().deleteById(id)
+      .then(response.json("Deleted"))
 })
 
 
